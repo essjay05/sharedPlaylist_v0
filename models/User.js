@@ -96,15 +96,20 @@ const UserSchema = new mongoose.Schema({
                 const foundUsername = await User.findOne({ username: userInput });
                 // if username NOT found
                 if(!foundUsername) {
+                    console.log(`ERROR: User not found`);
                     return Promise.reject();
                 }
-                console.log(`ERROR: User not found`)
-                return Promise.reject();
+                // If Username IS found:
+                const matchedPassword = await foundUsername.comparePassword(password);
+                console.log(`matchedPassword: ${matchedPassword}`);
+                console.log(`foundUsername: ${foundUsername}`);
+                return Promise.resolve(foundUsername)
+                
             }
-           
-            const matchedPw = await foundUser.comparePassword( password );
+                // If User email IS found: 
+                const matchedPw = await foundEmail.comparePassword( password );
                 console.log(`FindByCredentials matchedPw is : ${ matchedPw }`);
-                console.log(`FindByCredentials foundUser is: ${ foundUser }`)
+                console.log(`FindByCredentials foundEmail is: ${ foundEmail }`)
                 return Promise.resolve(foundUser);
         } catch (err) {
             console.log(`ERROR: Invalid credentials`)
@@ -113,14 +118,14 @@ const UserSchema = new mongoose.Schema({
     }
     // Compare hashed user password to allow user to login if matched
     UserSchema.methods.comparePassword = async function( password ) {
-        const match = await bcrypt.compare( password, this.password );
-        if (!match) {
-            console.log(`Password is invalid.`)
-            return Promise.reject();
-        } console.log(`comparePassword match is: ${match}`)
-        console.log(`Success! Password is a match!`);
-        return Promise.resolve(match);
-    }
+            const match = await bcrypt.compare( password, this.password );
+            if (!match) {
+                console.log(`Password is invalid.`)
+                return Promise.reject();
+            } console.log(`comparePassword match is: ${match}`)
+            console.log(`Success! Password is a match!`);
+            return Promise.resolve(match);
+        }
     // Bcrypt hash password before creating new user
     UserSchema.pre('save', function(next) {
         let user = this;
