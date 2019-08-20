@@ -84,5 +84,24 @@ module.exports = {
             res.status(400).send(err);
             console.log(err);
         }   
+    },
+    // Render Login
+
+    // Login & Sign out
+    login: async ( req, res ) => {
+        // Changed req.body.mail to req.body.input so it can intake either a username OR password to check
+        console.log(`Finding user ${req.body.input} to login`)
+
+        try {
+            const user = await User.findByCredentials( req.body.input, req.body.password );
+                console.log(`Login... this is my found user: ${user}`);
+            const createdToken = await user.signToken();
+                console.log(`${user.email} is successfully logged in and given an auth token`)
+            
+            res.status(200).header('x-auth', createdToken).send(user).redirect(307, '/profile');
+        } catch (err) {
+            console.log(`ERROR: invalid credentials`);
+            res.status(400).send({ errorMsg: err, message: `ERROR: invalid credentials. Access denied.`})
+        }
     }
 }

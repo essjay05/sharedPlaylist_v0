@@ -47,18 +47,15 @@ const UserSchema = new mongoose.Schema({
     // Generate Auth Token
     UserSchema.methods.signToken = async function() {
         let user = this;
-        console.log(`signToken user is: ${user}`)
+        // console.log(`signToken user is: ${user}`)
         let access = 'auth';
 
-        let token = jwt.sign({ _id: user._id.toHexString(), access }, process.env.JWT_SECRET, { expiresIn: '7 days' }).toString();
+        let token = jwt.sign({ _id: user._id.toHexString(), access }, process.env.JWT_SECRET, { expiresIn: '90 minutes' }).toString();
         console.log(`token created from jwt.sign is: ${token}`)
         // Adding access and token variables to our user.tokens array
         user.tokens = user.tokens.concat([{ access, token }]);
 
-        // Await result of user.save function
-        const savedToken = await user.save();
-        console.log(`savedToken after creation is: ${savedToken}`)
-        return token;
+        tr
     };
 
     // FindByToken method
@@ -75,9 +72,7 @@ const UserSchema = new mongoose.Schema({
 
         try {
             const foundUser = await User.findOne({ 
-                '_id': decoded._id,
-                'tokens.token': token,
-                'tokens.access': 'auth'
+                '_id': f
             });
 
             console.log(foundUser);
@@ -89,16 +84,24 @@ const UserSchema = new mongoose.Schema({
     };
 
     // Static method to allow to find user by email or password:
-    UserSchema.statics.findByCredentials = async function( email, password ) {
+    UserSchema.statics.findByCredentials = async function( userInput, password ) {
         let User = this;
 
         try {
-            const foundUser = await User.findOne({ email });
-            // if NOT found
-            if (!foundUser) {
+            const foundEmail = await User.findOne({ email: userInput });
+            console.log(`findByCredentials userInput: ${userInput}`)
+            // if email NOT found
+            
+            if (!foundEmail) {
+                const foundUsername = await User.findOne({ username: userInput });
+                // if username NOT found
+                if(!foundUsername) {
+                    return Promise.reject();
+                }
                 console.log(`ERROR: User not found`)
                 return Promise.reject();
             }
+           
             const matchedPw = await foundUser.comparePassword( password );
                 console.log(`FindByCredentials matchedPw is : ${ matchedPw }`);
                 console.log(`FindByCredentials foundUser is: ${ foundUser }`)

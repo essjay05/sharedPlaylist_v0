@@ -6,6 +6,17 @@ const
     authenticate = require('../middleware/authenticate'),
     User = require('../models/User');
 
+// Render non-Authenticated views: Home page, Sign Up, Log In
+    // Login View
+    usersRouter.get('/login', ( req, res) => {
+        res.render('./pages/login')
+    })
+    // SignUp View
+    usersRouter.get('/signup', ( req, res) => {
+        res.render('./pages/signup')
+    })
+
+
 // User CRUD functions:
     // Authenticate Sign up / CREATE User:
     usersRouter.post('/signup', usersCtrl.create);
@@ -20,47 +31,17 @@ const
 
 // User login / logout functions and authenticate with token:
     // User login and give auth token
-    usersRouter.post('/login', async ( req, res ) => {
-        console.log(`Finding user ${req.body.email} to login`)
+    usersRouter.post('/login', usersCtrl.login);
 
-        try {
-            const user = await User.findByCredentials( req.body.email, req.body.password );
-                console.log(`Login... this is my found user: ${user}`);
-            const createdToken = await user.signToken();
-                console.log(`${user.email} is successfully logged in and given an auth token`)
-            
-            res.status(200).header('x-auth', createdToken).send(user);
-        } catch (err) {
-            console.log(`ERROR: invalid credentials`);
-            res.status(400).send({ errorMsg: err, message: `ERROR: invalid credentials. Access denied.`})
-        }
-    })
-// Render USER Views:
-// Login View
-    // usersRouter.get('/login', ( req, res) => {
-    //     res.render('index', { message: req.flash('loginMessage') })
-    // })
+// Render Authenticated USER Views:
+    
 // Authenticate Login
 
 // Render Sign up View
 
 // Render form to Edit profile
 
-// Show profile (MUST BE LOGGED IN [Read 1]):
-// usersRouter.post('/login', async ( req, res ) => {
-//     console.log(`Finding user ${req.body.email} for login.`);
 
-//     try {
-//         const user = await user.findByCredentials(req.body.email, req.body.password);
-//             console.log(`This is my found user: ${user}`);
-//         const createdToken = await user.signToken();
-        
-//         res.status(200).Headers('x-auth', createdToken).send(user);
-//     } catch(error) {
-//         res.status(400).send({ errorMsg: error });
-//         console.log(error);
-//     }
-// })
 
 // Log Out
 
