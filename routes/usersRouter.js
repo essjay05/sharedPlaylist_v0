@@ -25,9 +25,9 @@ const
     // Show 1 profile (Must be logged in):
     usersRouter.get('/:id', authenticate, usersCtrl.show);
     // Update profile [UPDATE User]:
-    usersRouter.patch('/:id/edit', authenticate, usersCtrl.update);
+    usersRouter.patch('/:id/', authenticate, usersCtrl.update);
     // Delete User Profile [DESTROY USER]
-    usersRouter.delete('/:id/edit', authenticate, usersCtrl.destroy);
+    usersRouter.delete('/:id/', authenticate, usersCtrl.destroy);
 
 // User login / logout functions and authenticate with token:
     // User login and give auth token

@@ -5,6 +5,7 @@ const
 
 // Make controllers exportable
 module.exports = {
+    // CREATE: WORKS
     create: async ( req, res ) => {
         console.log(req.body);
     
@@ -24,6 +25,7 @@ module.exports = {
             console.log(err);
         }
     },
+    // INDEX USERS: WORKS
     index: async ( req, res ) => {
         console.log(`Finding ALL users in database.`);
         try {
@@ -35,6 +37,7 @@ module.exports = {
             console.log(error);
         }
     },
+    // SHOW 1 USER: WORKS
     show: async ( req, res ) => {
         console.log(`Finding userID: ${req.params.id}`)
     
@@ -47,6 +50,7 @@ module.exports = {
         }
     
     },
+    // UPDATE USER: WORKS
     update: ( req, res ) => {
         console.log(`User to be updated: ${req.params.id}`)
     
@@ -73,7 +77,7 @@ module.exports = {
         //     res.status(400).send(err);
         //     console.log(err);
         // } 
-    
+    // DESTROY USER: WORKS
     destroy: async ( req, res ) => {
         console.log(`Finding user id# ${req.params.id} to delete`);
         try {
@@ -88,6 +92,7 @@ module.exports = {
     // Render Login
 
     // Login & Sign out
+    // LOGIN: WORKS
     login: async ( req, res ) => {
         // Changed req.body.mail to req.body.input so it can intake either a username OR password to check
         console.log(`Finding user ${req.body.input} to login`)
@@ -98,7 +103,7 @@ module.exports = {
             const createdToken = await user.signToken();
                 console.log(`${user.email} is successfully logged in and given an auth token`)
             
-            res.status(200).header('x-auth', createdToken).send(user).redirect(307, '/profile');
+            res.status(200).header('x-auth', createdToken).send(user);
         } catch (err) {
             console.log(`ERROR: invalid credentials`);
             res.status(400).send({ errorMsg: err, message: `ERROR: invalid credentials. Access denied.`})

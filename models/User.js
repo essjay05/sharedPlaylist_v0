@@ -55,7 +55,9 @@ const UserSchema = new mongoose.Schema({
         // Adding access and token variables to our user.tokens array
         user.tokens = user.tokens.concat([{ access, token }]);
 
-        tr
+        const savedToken = await user.save();
+
+        return token;
     };
 
     // FindByToken method
@@ -71,9 +73,12 @@ const UserSchema = new mongoose.Schema({
         }
 
         try {
-            const foundUser = await User.findOne({ 
-                '_id': f
+            const foundUser = await User.findOne({
+                '_id': decoded._id,
+                'tokens.token': token,
+                'tokens.access': 'auth'
             });
+    
 
             console.log(foundUser);
             return foundUser;
@@ -110,7 +115,7 @@ const UserSchema = new mongoose.Schema({
                 const matchedPw = await foundEmail.comparePassword( password );
                 console.log(`FindByCredentials matchedPw is : ${ matchedPw }`);
                 console.log(`FindByCredentials foundEmail is: ${ foundEmail }`)
-                return Promise.resolve(foundUser);
+                return Promise.resolve(foundEmail);
         } catch (err) {
             console.log(`ERROR: Invalid credentials`)
             return Promise.reject();
